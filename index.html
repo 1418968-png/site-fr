@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Invest Navigator</title>
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html">Invest Navigator</a>
+      <nav class="nav-links" aria-label="Основная навигация">
+        <a href="index.html">Секторы</a>
+        <a href="screener.html">Скринер</a>
+        <a href="methodology.html">Методология</a>
+      </nav>
+      <div class="search-shell">
+        <label class="visually-hidden" for="global-search">Поиск компаний и секторов</label>
+        <input id="global-search" class="global-search" type="search" placeholder="Поиск по компании или тикеру" autocomplete="off">
+      </div>
+    </header>
+
+    <main>
+      <section class="hero-panel">
+        <div class="hero-copy">
+          <p class="eyebrow">Аналитический контур</p>
+          <h1>Invest Navigator</h1>
+          <p>
+            Сводка по рыночным сегментам, компаниям и базовым мультипликаторам
+            для предварительного инвестиционного анализа.
+          </p>
+        </div>
+        <div class="hero-snapshot" aria-label="Сводка рынка">
+          <div>
+            <span class="snapshot-value">6</span>
+            <span class="snapshot-label">секторов</span>
+          </div>
+          <div>
+            <span class="snapshot-value">18</span>
+            <span class="snapshot-label">компаний</span>
+          </div>
+          <div>
+            <span class="snapshot-value">100</span>
+            <span class="snapshot-label">максимум скоринга</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <div class="section-heading">
+          <p class="eyebrow">Рынок</p>
+          <h2>Сегменты рынка</h2>
+        </div>
+        <div id="sector-grid" class="sector-grid" aria-live="polite">
+          <p class="loading">Загрузка сегментов...</p>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/search.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

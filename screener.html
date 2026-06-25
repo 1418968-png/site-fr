@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Скринер | Invest Navigator</title>
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html">Invest Navigator</a>
+      <nav class="nav-links" aria-label="Основная навигация">
+        <a href="index.html">Секторы</a>
+        <a href="screener.html">Скринер</a>
+        <a href="methodology.html">Методология</a>
+      </nav>
+      <div class="search-shell">
+        <label class="visually-hidden" for="global-search">Поиск компаний и секторов</label>
+        <input id="global-search" class="global-search" type="search" placeholder="Поиск по компании или тикеру" autocomplete="off">
+      </div>
+    </header>
+
+    <main id="screener-page">
+      <section class="page-head">
+        <p class="eyebrow">Скринер</p>
+        <h1>Отбор компаний</h1>
+        <p class="lead">Фильтрация и сортировка учебной выборки компаний без перезагрузки страницы.</p>
+      </section>
+
+      <section class="filter-panel" aria-label="Фильтры скринера">
+        <div class="field">
+          <label for="screener-search">Поиск</label>
+          <input id="screener-search" type="search" placeholder="Название или тикер" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="sector-filter">Сектор</label>
+          <select id="sector-filter">
+            <option value="">Все сектора</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="sort-filter">Сортировка</label>
+          <select id="sort-filter">
+            <option value="score-desc">Скоринг: по убыванию</option>
+            <option value="score-asc">Скоринг: по возрастанию</option>
+            <option value="pe-asc">P/E: по возрастанию</option>
+            <option value="roe-desc">ROE: по убыванию</option>
+            <option value="name-asc">Название: А-Я</option>
+          </select>
+        </div>
+        <label class="check-field">
+          <input id="pe-under-10" type="checkbox">
+          <span>P/E меньше 10</span>
+        </label>
+        <label class="check-field">
+          <input id="roe-over-15" type="checkbox">
+          <span>ROE больше 15%</span>
+        </label>
+      </section>
+
+      <section class="content-section">
+        <div class="section-heading table-heading">
+          <div>
+            <p class="eyebrow">Результаты</p>
+            <h2>Компании</h2>
+          </div>
+          <span id="screener-count" class="result-count">0 найдено</span>
+        </div>
+        <div id="screener-error" class="message error-message" hidden></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Компания</th>
+                <th>Тикер</th>
+                <th>Сектор</th>
+                <th>P/E</th>
+                <th>P/B</th>
+                <th>ROE</th>
+                <th>Див. доходность</th>
+                <th>Долг</th>
+                <th>Скоринг</th>
+              </tr>
+            </thead>
+            <tbody id="screener-body">
+              <tr>
+                <td colspan="9">Загрузка компаний...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/search.js"></script>
+    <script src="js/screener.js"></script>
+  </body>
+</html>

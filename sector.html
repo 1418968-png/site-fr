@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Сектор | Invest Navigator</title>
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html">Invest Navigator</a>
+      <nav class="nav-links" aria-label="Основная навигация">
+        <a href="index.html">Секторы</a>
+        <a href="screener.html">Скринер</a>
+        <a href="methodology.html">Методология</a>
+      </nav>
+      <div class="search-shell">
+        <label class="visually-hidden" for="global-search">Поиск компаний и секторов</label>
+        <input id="global-search" class="global-search" type="search" placeholder="Поиск по компании или тикеру" autocomplete="off">
+      </div>
+    </header>
+
+    <main id="sector-page">
+      <section class="page-head">
+        <a class="back-link" href="index.html">Назад к секторам</a>
+        <p class="eyebrow">Сектор</p>
+        <h1 id="sector-title">Загрузка...</h1>
+        <p id="sector-description" class="lead"></p>
+        <div class="metric-strip">
+          <div class="metric-box">
+            <span>Уровень риска</span>
+            <strong id="sector-risk">-</strong>
+          </div>
+          <div class="metric-box">
+            <span>Рыночное настроение</span>
+            <strong id="sector-mood">-</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <div class="section-heading">
+          <p class="eyebrow">Компании</p>
+          <h2>Сравнительная таблица</h2>
+        </div>
+        <div id="sector-error" class="message error-message" hidden></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Компания</th>
+                <th>Тикер</th>
+                <th>P/E</th>
+                <th>P/B</th>
+                <th>ROE</th>
+                <th>Див. доходность</th>
+                <th>Долг</th>
+                <th>Скоринг</th>
+              </tr>
+            </thead>
+            <tbody id="sector-companies-body">
+              <tr>
+                <td colspan="8">Загрузка компаний...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/search.js"></script>
+    <script src="js/sectors.js"></script>
+  </body>
+</html>

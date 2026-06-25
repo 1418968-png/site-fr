@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Компания | Invest Navigator</title>
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html">Invest Navigator</a>
+      <nav class="nav-links" aria-label="Основная навигация">
+        <a href="index.html">Секторы</a>
+        <a href="screener.html">Скринер</a>
+        <a href="methodology.html">Методология</a>
+      </nav>
+      <div class="search-shell">
+        <label class="visually-hidden" for="global-search">Поиск компаний и секторов</label>
+        <input id="global-search" class="global-search" type="search" placeholder="Поиск по компании или тикеру" autocomplete="off">
+      </div>
+    </header>
+
+    <main id="company-page">
+      <section class="page-head company-head">
+        <a id="company-back-link" class="back-link" href="index.html">Назад к сектору</a>
+        <p class="eyebrow">Компания</p>
+        <div class="company-title-row">
+          <div>
+            <h1 id="company-name">Загрузка...</h1>
+            <p id="company-meta" class="lead"></p>
+          </div>
+          <div class="score-card">
+            <span>Инвестиционный скоринг</span>
+            <strong id="company-score">-</strong>
+            <div class="score-meter" aria-hidden="true">
+              <span id="company-score-bar"></span>
+            </div>
+          </div>
+        </div>
+        <p id="company-description" class="company-description"></p>
+      </section>
+
+      <div id="company-error" class="message error-message" hidden></div>
+
+      <section class="company-layout">
+        <div class="metrics-card">
+          <div class="section-heading">
+            <p class="eyebrow">Показатели</p>
+            <h2>Базовая аналитика</h2>
+          </div>
+          <dl class="metrics-grid">
+            <div>
+              <dt>P/E</dt>
+              <dd id="metric-pe">-</dd>
+            </div>
+            <div>
+              <dt>P/B</dt>
+              <dd id="metric-pb">-</dd>
+            </div>
+            <div>
+              <dt>ROE</dt>
+              <dd id="metric-roe">-</dd>
+            </div>
+            <div>
+              <dt>Дивидендная доходность</dt>
+              <dd id="metric-dividend">-</dd>
+            </div>
+            <div>
+              <dt>Долговая нагрузка</dt>
+              <dd id="metric-debt">-</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="chart-card">
+          <div class="section-heading">
+            <p class="eyebrow">Цена акции</p>
+            <h2>График</h2>
+          </div>
+          <div class="chart-placeholder" aria-label="Заглушка графика цены акции">
+            <svg viewBox="0 0 520 220" role="img" aria-label="Условная линия цены">
+              <polyline points="8,172 72,150 136,160 198,116 260,128 326,82 392,96 456,54 512,70"></polyline>
+              <line x1="8" y1="184" x2="512" y2="184"></line>
+              <line x1="8" y1="36" x2="8" y2="184"></line>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <section class="analysis-grid">
+        <article class="analysis-block">
+          <p class="eyebrow">Позитивные факторы</p>
+          <h2>Сильные стороны</h2>
+          <ul id="company-strengths"></ul>
+        </article>
+        <article class="analysis-block risk-block">
+          <p class="eyebrow">Риски</p>
+          <h2>Ключевые риски</h2>
+          <ul id="company-risks"></ul>
+        </article>
+        <article class="analysis-block conclusion-block">
+          <p class="eyebrow">Итог</p>
+          <h2>Вывод</h2>
+          <p id="company-conclusion"></p>
+        </article>
+      </section>
+
+      <p class="disclaimer">Информация на сайте не является индивидуальной инвестиционной рекомендацией.</p>
+    </main>
+
+    <script src="js/search.js"></script>
+    <script src="js/company.js"></script>
+  </body>
+</html>
