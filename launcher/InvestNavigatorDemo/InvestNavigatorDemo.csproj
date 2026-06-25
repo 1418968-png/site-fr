@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>InvestNavigatorDemo</AssemblyName>
+    <RootNamespace>InvestNavigatorDemo</RootNamespace>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\*.html" LogicalName="%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\..\css\**\*.*" LogicalName="css/%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\..\data\**\*.*" LogicalName="data/%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\..\js\**\*.*" LogicalName="js/%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+</Project>

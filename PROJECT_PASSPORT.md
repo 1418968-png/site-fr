@@ -35,9 +35,11 @@
 - В проект добавлен статический MVP сайта Invest Navigator — инструмент для первичного анализа рыночных сегментов и компаний.
 - Рабочие файлы сайта находятся в корне проекта `C:\Codex\сайт FR`.
 - Добавлен `start.bat` для запуска локального тестового сервера на `http://127.0.0.1:5500/`.
+- Добавлен демонстрационный самодостаточный файл `dist\InvestNavigatorDemo.exe` для запуска сайта одним файлом на Windows x64.
+- Добавлен исходный код лаунчера `launcher\InvestNavigatorDemo` на C#/.NET; лаунчер встраивает HTML, CSS, JS и JSON в ресурсы `exe`.
 - Backend, сборщик, пакетный менеджер и внешние API пока не используются.
 - Данные хранятся в локальных JSON-файлах и загружаются в браузере через `fetch`.
-- Сайт рассчитан на запуск через `start.bat`, VS Code Live Server или любой локальный статический HTTP-сервер.
+- Сайт рассчитан на запуск через `dist\InvestNavigatorDemo.exe`, `start.bat`, VS Code Live Server или любой локальный статический HTTP-сервер.
 
 ## Технологический стек
 
@@ -47,10 +49,45 @@
 - JSON для локальных данных.
 - Windows Batch для сценария запуска.
 - Python `http.server` используется как локальный статический сервер для проверки.
+- C# и .NET 10 SDK используются только для сборки переносимого демонстрационного `exe`.
+- Встроенный HTTP-сервер демонстрационного `exe` реализован через `TcpListener`, без `HttpListener`, URL ACL и внешних зависимостей.
 
 ## Команды проекта
 
-Установка зависимостей не требуется.
+Установка зависимостей для запуска сайта не требуется.
+
+Демонстрационный запуск одним файлом на Windows x64:
+
+```powershell
+.\dist\InvestNavigatorDemo.exe
+```
+
+`dist\InvestNavigatorDemo.exe`:
+
+- содержит файлы сайта внутри себя;
+- запускает локальный HTTP-сервер на `127.0.0.1`;
+- по умолчанию пробует порт `5500`;
+- если порт `5500` занят, при обычном запуске перебирает порты `5501`-`5599`, затем просит ОС выдать свободный порт;
+- автоматически открывает фактический URL в браузере;
+- держит сайт доступным, пока открыто консольное окно лаунчера.
+
+Дополнительные параметры лаунчера:
+
+```powershell
+.\dist\InvestNavigatorDemo.exe --port 5600
+.\dist\InvestNavigatorDemo.exe --no-open
+.\dist\InvestNavigatorDemo.exe --help
+```
+
+При указании `--port` лаунчер использует только указанный порт; если он занят, запуск завершается ошибкой.
+
+Пересборка демонстрационного `exe` из корня проекта:
+
+```powershell
+dotnet publish .\launcher\InvestNavigatorDemo\InvestNavigatorDemo.csproj -c Release -r win-x64 --self-contained true -o .\dist
+```
+
+Для пересборки нужен .NET SDK 10 на машине разработчика. На демонстрационном ПК .NET Runtime, Python и исходные файлы проекта не нужны.
 
 Основной локальный запуск на Windows из корня проекта:
 
@@ -95,7 +132,7 @@ $sectors = Get-Content -LiteralPath 'data\sectors.json' -Raw | ConvertFrom-Json
 $companies = Get-Content -LiteralPath 'data\companies.json' -Raw | ConvertFrom-Json
 ```
 
-Сборка, линтинг, автотесты и деплой пока не настроены.
+Сборка демонстрационного `exe` настроена через `dotnet publish`. Линтинг, автотесты и деплой пока не настроены.
 
 ## Архитектура и сценарии
 
@@ -105,7 +142,10 @@ $companies = Get-Content -LiteralPath 'data\companies.json' -Raw | ConvertFrom-J
 - `screener.html` загружает все компании и обновляет таблицу без перезагрузки страницы при поиске, фильтрации и сортировке.
 - `methodology.html` статически описывает методологию показателей и дисклеймер.
 - `js/search.js` подключен ко всем страницам и реализует глобальный поиск по компаниям и секторам.
+- `launcher\InvestNavigatorDemo\Program.cs` содержит минимальный локальный HTTP-сервер, карту встроенных ресурсов, выбор свободного порта и автоматическое открытие браузера.
+- `launcher\InvestNavigatorDemo\InvestNavigatorDemo.csproj` встраивает `*.html`, `css/**/*`, `js/**/*` и `data/**/*` как `EmbeddedResource`, поэтому `dist\InvestNavigatorDemo.exe` является снимком сайта на момент публикации.
 - Важное решение: не использовать React, Next.js, backend или Sites/vinext-стартер, потому что требования первой версии явно ограничивают стек HTML/CSS/JavaScript/JSON.
+- Важное решение: для демонстрации одним файлом выбран self-contained `.NET` single-file `exe`, потому что Go не установлен в текущей среде, а Python/PyInstaller потребовали бы дополнительных зависимостей.
 
 ## Данные и ограничения
 
@@ -113,6 +153,9 @@ $companies = Get-Content -LiteralPath 'data\companies.json' -Raw | ConvertFrom-J
 - `data/companies.json` содержит 18 учебных компаний, по 3 компании на каждый сектор.
 - Финансовые показатели являются примерными учебными данными, не актуальными рыночными данными.
 - Открытие HTML напрямую через `file://` может не работать из-за браузерных ограничений `fetch`; нужен Live Server или локальный HTTP-сервер.
+- `dist\InvestNavigatorDemo.exe` собран для Windows x64; для Windows ARM64 или x86 нужен отдельный `RuntimeIdentifier` и отдельная публикация.
+- `dist\InvestNavigatorDemo.exe` содержит встроенную копию сайта. После изменения HTML, CSS, JS или JSON нужно заново выполнить `dotnet publish`, иначе `exe` продолжит показывать старую встроенную версию.
+- При запуске `exe` может появиться предупреждение Windows SmartScreen, потому что файл локально собран и не подписан сертификатом.
 - Реальные котировки, API, пользовательские списки, сохранение состояния и полноценные графики пока не реализованы.
 - Формула скоринга в MVP представлена готовым числовым полем в JSON; автоматический расчет можно добавить позже.
 
@@ -120,6 +163,7 @@ $companies = Get-Content -LiteralPath 'data\companies.json' -Raw | ConvertFrom-J
 
 ```text
 C:\Codex\сайт FR
+├── .gitignore
 ├── README.md
 ├── PROJECT_PASSPORT.md
 ├── start.bat
@@ -133,20 +177,27 @@ C:\Codex\сайт FR
 ├── data
 │   ├── companies.json
 │   └── sectors.json
+├── dist
+│   └── InvestNavigatorDemo.exe
 ├── investment-website
 │   └── (empty, not used by the current launcher)
-└── js
-    ├── app.js
-    ├── company.js
-    ├── screener.js
-    ├── search.js
-    └── sectors.js
+├── js
+│   ├── app.js
+│   ├── company.js
+│   ├── screener.js
+│   ├── search.js
+│   └── sectors.js
+└── launcher
+    └── InvestNavigatorDemo
+        ├── InvestNavigatorDemo.csproj
+        └── Program.cs
 ```
 
 ## Переменные окружения и интеграции
 
 - Переменные окружения не требуются.
 - `start.bat` использует локальные переменные `HOST=127.0.0.1`, `PORT=5500`, `URL=http://127.0.0.1:5500/`, `SITE_DIR=%~dp0`.
+- `InvestNavigatorDemo.exe` не требует переменных окружения и поддерживает аргументы командной строки `--port`, `--no-open`, `--help`.
 - Внешние сервисы и API не подключены.
 - Конфигурация деплоя не добавлялась.
 
@@ -180,6 +231,16 @@ C:\Codex\сайт FR
   - `start.bat` принудительно освободил порт;
   - после запуска сервер слушал порт `5500` процессом PID `38404`;
   - `curl.exe http://127.0.0.1:5500/` вернул `200` и размер ответа `2432` байта.
+- После добавления демонстрационного `exe` выполнены проверки:
+  - `dotnet build .\launcher\InvestNavigatorDemo\InvestNavigatorDemo.csproj -c Release` завершился успешно без предупреждений и ошибок;
+  - `dotnet publish .\launcher\InvestNavigatorDemo\InvestNavigatorDemo.csproj -c Release -r win-x64 --self-contained true -o .\dist` завершился успешно;
+  - в `dist` создан один файл `InvestNavigatorDemo.exe` размером `37538226` байт;
+  - промежуточные каталоги `launcher\InvestNavigatorDemo\bin` и `launcher\InvestNavigatorDemo\obj` удалены после публикации и добавлены в `.gitignore`;
+  - запуск `dist\InvestNavigatorDemo.exe --no-open --port 5688` поднял сервер, процесс оставался активным;
+  - через `curl.exe` от `exe` получены HTTP 200 для `/`, `/sector.html?sector=banks`, `/company.html?ticker=NBRK`, `/screener.html`, `/methodology.html`, `data/*.json`, `css/style.css` и всех `js/*.js`;
+  - через headless Microsoft Edge от `exe` подтверждена DOM-отрисовка главной страницы, страницы сектора, карточки `NBRK` и скринера;
+  - карточка `company.html?ticker=NBRK` отрисовала тикер `NBRK` и название `Северный Банк`;
+  - `screener.html` отрисовал 18 ссылок на компании и счетчик `18 найдено`.
 
 ## Журнал изменений
 
@@ -199,3 +260,8 @@ C:\Codex\сайт FR
 - В `start.bat` реализовано принудительное освобождение порта `5500` через `netstat` и `taskkill /F`.
 - Обновлен `README.md`: основной запуск теперь выполняется через `start.bat` из корня проекта.
 - Обновлен `PROJECT_PASSPORT.md`: зафиксирована фактическая корневая структура сайта, команда запуска и результат проверки `start.bat`.
+- Добавлен `.gitignore` для исключения промежуточных `.NET` каталогов `launcher/**/bin/` и `launcher/**/obj/`.
+- Добавлен проект `launcher\InvestNavigatorDemo` на C#/.NET для упаковки сайта в один самодостаточный Windows x64 `exe`.
+- Добавлен `dist\InvestNavigatorDemo.exe` для демонстрационного запуска сайта одним файлом без Python, .NET Runtime и исходных файлов проекта на целевом ПК.
+- Обновлен `README.md`: добавлены инструкции запуска `dist\InvestNavigatorDemo.exe`, параметры лаунчера и команда пересборки.
+- Обновлен `PROJECT_PASSPORT.md`: зафиксированы архитектура лаунчера, ограничения single-file публикации, команды сборки и результаты проверок.
