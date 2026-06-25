@@ -32,10 +32,12 @@
 
 - Дата первичного создания паспорта: 2026-06-25.
 - Корневая директория проекта: `C:\Codex\сайт FR`.
-- В проект добавлен статический MVP сайта `investment-website` — инструмент для первичного анализа рыночных сегментов и компаний.
+- В проект добавлен статический MVP сайта Invest Navigator — инструмент для первичного анализа рыночных сегментов и компаний.
+- Рабочие файлы сайта находятся в корне проекта `C:\Codex\сайт FR`.
+- Добавлен `start.bat` для запуска локального тестового сервера на `http://127.0.0.1:5500/`.
 - Backend, сборщик, пакетный менеджер и внешние API пока не используются.
 - Данные хранятся в локальных JSON-файлах и загружаются в браузере через `fetch`.
-- Сайт рассчитан на запуск через VS Code Live Server или любой локальный статический HTTP-сервер.
+- Сайт рассчитан на запуск через `start.bat`, VS Code Live Server или любой локальный статический HTTP-сервер.
 
 ## Технологический стек
 
@@ -43,40 +45,54 @@
 - CSS3.
 - Vanilla JavaScript.
 - JSON для локальных данных.
-- Python `http.server` использовался только как локальный статический сервер для проверки.
+- Windows Batch для сценария запуска.
+- Python `http.server` используется как локальный статический сервер для проверки.
 
 ## Команды проекта
 
 Установка зависимостей не требуется.
 
-Локальный запуск через Python из папки `investment-website`:
+Основной локальный запуск на Windows из корня проекта:
 
-```bash
-python -m http.server 5500
+```bat
+start.bat
 ```
 
-После запуска сайт доступен по адресу:
+`start.bat`:
+
+- работает из корня проекта;
+- проверяет наличие `index.html`;
+- принудительно освобождает порт `5500`, если он занят процессом в состоянии `LISTENING`;
+- завершает найденные процессы командой `taskkill /PID <pid> /F` без запросов;
+- запускает сервер `py -m http.server 5500 --bind 127.0.0.1`, если доступен Python Launcher;
+- иначе запускает `python -m http.server 5500 --bind 127.0.0.1`;
+- печатает адрес сайта и держит сервер в текущей консоли до `Ctrl+C`.
+
+После запуска сайт доступен строго по адресу:
 
 ```text
 http://127.0.0.1:5500/
 ```
 
-Альтернативный локальный запуск:
+Альтернативный локальный запуск вручную из корня проекта:
 
-- открыть папку `investment-website` в VS Code;
-- открыть `index.html` через расширение Live Server.
+```bash
+python -m http.server 5500 --bind 127.0.0.1
+```
+
+Также можно открыть проект через VS Code Live Server.
 
 Проверка синтаксиса JavaScript:
 
 ```powershell
-Get-ChildItem -LiteralPath 'investment-website\js' -Filter *.js | ForEach-Object { node --check $_.FullName }
+Get-ChildItem -LiteralPath 'js' -Filter *.js | ForEach-Object { node --check $_.FullName }
 ```
 
 Проверка JSON:
 
 ```powershell
-$sectors = Get-Content -LiteralPath 'investment-website\data\sectors.json' -Raw | ConvertFrom-Json
-$companies = Get-Content -LiteralPath 'investment-website\data\companies.json' -Raw | ConvertFrom-Json
+$sectors = Get-Content -LiteralPath 'data\sectors.json' -Raw | ConvertFrom-Json
+$companies = Get-Content -LiteralPath 'data\companies.json' -Raw | ConvertFrom-Json
 ```
 
 Сборка, линтинг, автотесты и деплой пока не настроены.
@@ -104,30 +120,33 @@ $companies = Get-Content -LiteralPath 'investment-website\data\companies.json' -
 
 ```text
 C:\Codex\сайт FR
+├── README.md
 ├── PROJECT_PASSPORT.md
-└── investment-website
-    ├── README.md
-    ├── company.html
-    ├── index.html
-    ├── methodology.html
-    ├── screener.html
-    ├── sector.html
-    ├── css
-    │   └── style.css
-    ├── data
-    │   ├── companies.json
-    │   └── sectors.json
-    └── js
-        ├── app.js
-        ├── company.js
-        ├── screener.js
-        ├── search.js
-        └── sectors.js
+├── start.bat
+├── company.html
+├── index.html
+├── methodology.html
+├── screener.html
+├── sector.html
+├── css
+│   └── style.css
+├── data
+│   ├── companies.json
+│   └── sectors.json
+├── investment-website
+│   └── (empty, not used by the current launcher)
+└── js
+    ├── app.js
+    ├── company.js
+    ├── screener.js
+    ├── search.js
+    └── sectors.js
 ```
 
 ## Переменные окружения и интеграции
 
 - Переменные окружения не требуются.
+- `start.bat` использует локальные переменные `HOST=127.0.0.1`, `PORT=5500`, `URL=http://127.0.0.1:5500/`, `SITE_DIR=%~dp0`.
 - Внешние сервисы и API не подключены.
 - Конфигурация деплоя не добавлялась.
 
@@ -135,11 +154,11 @@ C:\Codex\сайт FR
 
 Проверки выполнены 2026-06-25.
 
-- `rg --files investment-website` подтвердил наличие всех требуемых файлов.
+- `rg --files` подтвердил наличие всех требуемых файлов в корне проекта.
 - `ConvertFrom-Json` успешно разобрал `data/sectors.json` и `data/companies.json`.
 - Проверены счетчики данных: 6 секторов, 18 компаний, 6 уникальных `sectorSlug`.
-- `node --check` успешно проверил все файлы `investment-website/js/*.js`.
-- Запущен локальный сервер `python -m http.server 5500 --bind 127.0.0.1` из папки `investment-website`; URL проверки: `http://127.0.0.1:5500/`.
+- `node --check` успешно проверил все файлы `js/*.js`.
+- Запущен локальный сервер `python -m http.server 5500 --bind 127.0.0.1`; URL проверки: `http://127.0.0.1:5500/`.
 - Через `curl.exe` проверены HTTP 200 для:
   - `/`;
   - `/sector.html?sector=banks`;
@@ -156,6 +175,11 @@ C:\Codex\сайт FR
   - `company.html?ticker=NBRK` отрисовал название компании и дисклеймер;
   - `screener.html` отрисовал 18 ссылок на компании и счетчик `18 найдено`.
 - Встроенный browser controller был недоступен из-за служебной ошибки `missing field sandboxPolicy`; для браузерной проверки использован локальный headless Microsoft Edge.
+- После добавления `start.bat` выполнена проверка запуска:
+  - до запуска порт `5500` был занят процессом PID `22768`;
+  - `start.bat` принудительно освободил порт;
+  - после запуска сервер слушал порт `5500` процессом PID `38404`;
+  - `curl.exe http://127.0.0.1:5500/` вернул `200` и размер ответа `2432` байта.
 
 ## Журнал изменений
 
@@ -164,10 +188,14 @@ C:\Codex\сайт FR
 - Создан `PROJECT_PASSPORT.md`.
 - Добавлено обязательное правило: файл должен всегда поддерживаться в актуальном состоянии и фиксировать все технические изменения проекта.
 - Зафиксировано начальное состояние проекта: исходные файлы, зависимости, команды сборки и тесты пока отсутствуют.
-- Создан статический сайт `investment-website`.
+- Создан статический сайт Invest Navigator.
 - Добавлены страницы `index.html`, `sector.html`, `company.html`, `screener.html`, `methodology.html`.
 - Добавлен единый адаптивный стиль `css/style.css`.
 - Добавлены JavaScript-модули `js/app.js`, `js/search.js`, `js/sectors.js`, `js/company.js`, `js/screener.js`.
 - Добавлены данные `data/sectors.json` и `data/companies.json`.
-- Добавлен `investment-website/README.md` с инструкциями запуска, структурой файлов, правилами добавления данных и идеями будущего FastAPI backend.
+- Добавлен `README.md` с инструкциями запуска, структурой файлов, правилами добавления данных и идеями будущего FastAPI backend.
 - Обновлен `PROJECT_PASSPORT.md` под текущее состояние проекта и результаты проверок.
+- Добавлен `start.bat` для локального запуска сайта на `http://127.0.0.1:5500/`.
+- В `start.bat` реализовано принудительное освобождение порта `5500` через `netstat` и `taskkill /F`.
+- Обновлен `README.md`: основной запуск теперь выполняется через `start.bat` из корня проекта.
+- Обновлен `PROJECT_PASSPORT.md`: зафиксирована фактическая корневая структура сайта, команда запуска и результат проверки `start.bat`.
