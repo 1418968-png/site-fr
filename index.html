@@ -10,7 +10,7 @@
     <header class="site-header">
       <a class="brand" href="index.html">Invest Navigator</a>
       <nav class="nav-links" aria-label="Основная навигация">
-        <a href="index.html">Секторы</a>
+        <a href="index.html">Главная</a>
         <a href="screener.html">Скринер</a>
         <a href="methodology.html">Методология</a>
       </nav>
@@ -32,16 +32,16 @@
         </div>
         <div class="hero-snapshot" aria-label="Сводка рынка">
           <div>
-            <span class="snapshot-value">6</span>
+            <span id="snapshot-sectors" class="snapshot-value">-</span>
             <span class="snapshot-label">секторов</span>
           </div>
           <div>
-            <span class="snapshot-value">18</span>
+            <span id="snapshot-companies" class="snapshot-value">-</span>
             <span class="snapshot-label">компаний</span>
           </div>
           <div>
             <span class="snapshot-value">100</span>
-            <span class="snapshot-label">максимум скоринга</span>
+            <span class="snapshot-label">максимум оценки</span>
           </div>
         </div>
       </section>
@@ -57,6 +57,7 @@
       </section>
     </main>
 
+    <script src="js/api.js"></script>
     <script src="js/search.js"></script>
     <script src="js/app.js"></script>
   </body>

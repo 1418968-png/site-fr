@@ -10,7 +10,7 @@
     <header class="site-header">
       <a class="brand" href="index.html">Invest Navigator</a>
       <nav class="nav-links" aria-label="Основная навигация">
-        <a href="index.html">Секторы</a>
+        <a href="index.html">Главная</a>
         <a href="screener.html">Скринер</a>
         <a href="methodology.html">Методология</a>
       </nav>
@@ -30,7 +30,7 @@
             <p id="company-meta" class="lead"></p>
           </div>
           <div class="score-card">
-            <span>Инвестиционный скоринг</span>
+            <span>Аналитическая оценка</span>
             <strong id="company-score">-</strong>
             <div class="score-meter" aria-hidden="true">
               <span id="company-score-bar"></span>
@@ -38,6 +38,20 @@
           </div>
         </div>
         <p id="company-description" class="company-description"></p>
+        <div class="market-strip">
+          <div>
+            <span>Цена</span>
+            <strong id="company-price">-</strong>
+          </div>
+          <div>
+            <span>Изменение</span>
+            <strong id="company-change">-</strong>
+          </div>
+          <div>
+            <span>Капитализация</span>
+            <strong id="company-market-cap">-</strong>
+          </div>
+        </div>
       </section>
 
       <div id="company-error" class="message error-message" hidden></div>
@@ -49,6 +63,14 @@
             <h2>Базовая аналитика</h2>
           </div>
           <dl class="metrics-grid">
+            <div>
+              <dt>Цена</dt>
+              <dd id="metric-price">-</dd>
+            </div>
+            <div>
+              <dt>Изменение</dt>
+              <dd id="metric-change">-</dd>
+            </div>
             <div>
               <dt>P/E</dt>
               <dd id="metric-pe">-</dd>
@@ -66,8 +88,20 @@
               <dd id="metric-dividend">-</dd>
             </div>
             <div>
-              <dt>Долговая нагрузка</dt>
+              <dt>Капитализация</dt>
+              <dd id="metric-market-cap">-</dd>
+            </div>
+            <div>
+              <dt>Объем</dt>
+              <dd id="metric-volume">-</dd>
+            </div>
+            <div>
+              <dt>Долг/EBITDA</dt>
               <dd id="metric-debt">-</dd>
+            </div>
+            <div>
+              <dt>EV/EBITDA</dt>
+              <dd id="metric-ev-ebitda">-</dd>
             </div>
           </dl>
         </div>
@@ -77,13 +111,32 @@
             <p class="eyebrow">Цена акции</p>
             <h2>График</h2>
           </div>
-          <div class="chart-placeholder" aria-label="Заглушка графика цены акции">
-            <svg viewBox="0 0 520 220" role="img" aria-label="Условная линия цены">
-              <polyline points="8,172 72,150 136,160 198,116 260,128 326,82 392,96 456,54 512,70"></polyline>
-              <line x1="8" y1="184" x2="512" y2="184"></line>
-              <line x1="8" y1="36" x2="8" y2="184"></line>
-            </svg>
+          <div id="price-chart-shell" class="chart-shell">
+            <canvas id="price-chart" aria-label="График цены" role="img"></canvas>
+            <div id="price-chart-empty" class="chart-empty" hidden>История цены пока недоступна</div>
           </div>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <div class="section-heading">
+          <p class="eyebrow">Рыночные данные</p>
+          <h2>Таблица показателей</h2>
+        </div>
+        <div class="table-wrap compact-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Показатель</th>
+                <th>Значение</th>
+              </tr>
+            </thead>
+            <tbody id="company-market-table">
+              <tr>
+                <td colspan="2">Загрузка данных...</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </section>
 
@@ -105,9 +158,12 @@
         </article>
       </section>
 
-      <p class="disclaimer">Информация на сайте не является индивидуальной инвестиционной рекомендацией.</p>
+      <p class="disclaimer">Информация на сайте носит аналитический и образовательный характер и не является индивидуальной инвестиционной рекомендацией.</p>
     </main>
 
+    <script src="js/vendor/chart.umd.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/charts.js"></script>
     <script src="js/search.js"></script>
     <script src="js/company.js"></script>
   </body>

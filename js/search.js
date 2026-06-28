@@ -61,7 +61,7 @@
         .slice(0, 6)
         .map((company) => ({
           title: `${company.name} (${company.ticker})`,
-          meta: `${company.sector} · скоринг ${company.score}`,
+          meta: `${company.sector} · оценка ${company.score}`,
           url: `company.html?ticker=${encodeURIComponent(company.ticker)}`
         }));
 
@@ -75,7 +75,7 @@
         .slice(0, 3)
         .map((sector) => ({
           title: sector.title,
-          meta: `${sector.riskLevel} риск · ${sector.marketMood}`,
+          meta: sector.description,
           url: `sector.html?sector=${encodeURIComponent(sector.slug)}`
         }));
 
@@ -91,22 +91,14 @@
     if (state.loaded) return state;
 
     const [companies, sectors] = await Promise.all([
-      fetchJson("data/companies.json"),
-      fetchJson("data/sectors.json")
+      window.InvestNavigatorApi.getCompanies(),
+      window.InvestNavigatorApi.getSectors()
     ]);
 
     state.companies = companies;
     state.sectors = sectors;
     state.loaded = true;
     return state;
-  }
-
-  async function fetchJson(url) {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Request failed: ${url}`);
-    }
-    return response.json();
   }
 
   function renderSearchResults(panel, results) {

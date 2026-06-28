@@ -10,7 +10,7 @@
     <header class="site-header">
       <a class="brand" href="index.html">Invest Navigator</a>
       <nav class="nav-links" aria-label="Основная навигация">
-        <a href="index.html">Секторы</a>
+        <a href="index.html">Главная</a>
         <a href="screener.html">Скринер</a>
         <a href="methodology.html">Методология</a>
       </nav>
@@ -24,7 +24,7 @@
       <section class="page-head">
         <p class="eyebrow">Скринер</p>
         <h1>Отбор компаний</h1>
-        <p class="lead">Фильтрация и сортировка учебной выборки компаний без перезагрузки страницы.</p>
+        <p class="lead">Фильтрация и сортировка компаний без перезагрузки страницы.</p>
       </section>
 
       <section class="filter-panel" aria-label="Фильтры скринера">
@@ -41,21 +41,30 @@
         <div class="field">
           <label for="sort-filter">Сортировка</label>
           <select id="sort-filter">
-            <option value="score-desc">Скоринг: по убыванию</option>
-            <option value="score-asc">Скоринг: по возрастанию</option>
+            <option value="score-desc">Оценка: по убыванию</option>
+            <option value="score-asc">Оценка: по возрастанию</option>
+            <option value="change-desc">Изменение: по убыванию</option>
             <option value="pe-asc">P/E: по возрастанию</option>
             <option value="roe-desc">ROE: по убыванию</option>
             <option value="name-asc">Название: А-Я</option>
           </select>
         </div>
-        <label class="check-field">
-          <input id="pe-under-10" type="checkbox">
-          <span>P/E меньше 10</span>
-        </label>
-        <label class="check-field">
-          <input id="roe-over-15" type="checkbox">
-          <span>ROE больше 15%</span>
-        </label>
+        <div class="field">
+          <label for="change-filter">Изменение</label>
+          <select id="change-filter">
+            <option value="">Любое</option>
+            <option value="positive">Положительное</option>
+            <option value="negative">Отрицательное</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="pe-max">P/E до</label>
+          <input id="pe-max" type="number" min="0" step="0.1" placeholder="Напр. 10">
+        </div>
+        <div class="field">
+          <label for="roe-min">ROE от, %</label>
+          <input id="roe-min" type="number" step="0.1" placeholder="Напр. 15">
+        </div>
       </section>
 
       <section class="content-section">
@@ -74,17 +83,18 @@
                 <th>Компания</th>
                 <th>Тикер</th>
                 <th>Сектор</th>
+                <th>Цена</th>
+                <th>Изменение</th>
                 <th>P/E</th>
                 <th>P/B</th>
                 <th>ROE</th>
                 <th>Див. доходность</th>
-                <th>Долг</th>
-                <th>Скоринг</th>
+                <th>Аналитическая оценка</th>
               </tr>
             </thead>
             <tbody id="screener-body">
               <tr>
-                <td colspan="9">Загрузка компаний...</td>
+                <td colspan="10">Загрузка компаний...</td>
               </tr>
             </tbody>
           </table>
@@ -92,6 +102,7 @@
       </section>
     </main>
 
+    <script src="js/api.js"></script>
     <script src="js/search.js"></script>
     <script src="js/screener.js"></script>
   </body>

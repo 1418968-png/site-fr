@@ -1,0 +1,18 @@
+{
+  "name": "invest-navigator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static investment analytics site with scheduled local market data snapshots.",
+  "scripts": {
+    "dev": "node scripts/dev-server.mjs",
+    "start": "node scripts/dev-server.mjs",
+    "preview": "node scripts/dev-server.mjs",
+    "build": "node scripts/validate-static.mjs",
+    "check": "npm run build",
+    "update:market": "node scripts/update-market-data.mjs"
+  },
+  "dependencies": {
+    "chart.js": "^4.5.1",
+    "cheerio": "^1.0.0"
+  }
+}

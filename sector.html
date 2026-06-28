@@ -10,7 +10,7 @@
     <header class="site-header">
       <a class="brand" href="index.html">Invest Navigator</a>
       <nav class="nav-links" aria-label="Основная навигация">
-        <a href="index.html">Секторы</a>
+        <a href="index.html">Главная</a>
         <a href="screener.html">Скринер</a>
         <a href="methodology.html">Методология</a>
       </nav>
@@ -28,14 +28,30 @@
         <p id="sector-description" class="lead"></p>
         <div class="metric-strip">
           <div class="metric-box">
-            <span>Уровень риска</span>
-            <strong id="sector-risk">-</strong>
-          </div>
-          <div class="metric-box">
-            <span>Рыночное настроение</span>
-            <strong id="sector-mood">-</strong>
+            <span>Компаний в секторе</span>
+            <strong id="sector-count">-</strong>
           </div>
         </div>
+      </section>
+
+      <section class="filter-panel sector-controls" aria-label="Фильтры сектора">
+        <div class="field">
+          <label for="sector-search">Поиск внутри сектора</label>
+          <input id="sector-search" type="search" placeholder="Название или тикер" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="sector-sort">Сортировка</label>
+          <select id="sector-sort">
+            <option value="ticker-asc">Тикер: А-Я</option>
+            <option value="name-asc">Название: А-Я</option>
+            <option value="price-desc">Цена: по убыванию</option>
+            <option value="change-desc">Изменение: по убыванию</option>
+            <option value="pe-asc">P/E: по возрастанию</option>
+            <option value="roe-desc">ROE: по убыванию</option>
+            <option value="score-desc">Оценка: по убыванию</option>
+          </select>
+        </div>
+        <span id="sector-result-count" class="result-count">0 найдено</span>
       </section>
 
       <section class="content-section">
@@ -50,17 +66,19 @@
               <tr>
                 <th>Компания</th>
                 <th>Тикер</th>
+                <th>Цена</th>
+                <th>Изменение</th>
                 <th>P/E</th>
                 <th>P/B</th>
                 <th>ROE</th>
                 <th>Див. доходность</th>
-                <th>Долг</th>
-                <th>Скоринг</th>
+                <th>Капитализация</th>
+                <th>Аналитическая оценка</th>
               </tr>
             </thead>
             <tbody id="sector-companies-body">
               <tr>
-                <td colspan="8">Загрузка компаний...</td>
+                <td colspan="10">Загрузка компаний...</td>
               </tr>
             </tbody>
           </table>
@@ -68,6 +86,7 @@
       </section>
     </main>
 
+    <script src="js/api.js"></script>
     <script src="js/search.js"></script>
     <script src="js/sectors.js"></script>
   </body>

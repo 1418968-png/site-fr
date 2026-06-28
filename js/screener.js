@@ -10,10 +10,8 @@ const screenerState = {
 
 async function initScreener() {
   try {
-    const [companies, sectors] = await Promise.all([
-      fetchJson("data/companies.json"),
-      fetchJson("data/sectors.json")
-    ]);
+    const companies = await window.InvestNavigatorApi.getCompanies();
+    const sectors = buildSectorsFromCompanies(companies);
 
     screenerState.companies = companies;
     screenerState.sectors = sectors;
@@ -21,14 +19,14 @@ async function initScreener() {
     bindScreenerControls();
     updateScreener();
   } catch {
-    const errorBox = document.querySelector("#screener-error");
+      const errorBox = document.querySelector("#screener-error");
     if (errorBox) {
       errorBox.textContent = "Не удалось загрузить данные скринера.";
       errorBox.hidden = false;
     }
     const tbody = document.querySelector("#screener-body");
     if (tbody) {
-      tbody.innerHTML = '<tr><td colspan="9">Нет данных для отображения.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="10">Нет данных для отображения.</td></tr>';
     }
   }
 }
@@ -50,8 +48,9 @@ function bindScreenerControls() {
     "#screener-search",
     "#sector-filter",
     "#sort-filter",
-    "#pe-under-10",
-    "#roe-over-15"
+    "#change-filter",
+    "#pe-max",
+    "#roe-min"
   ].forEach((selector) => {
     const element = document.querySelector(selector);
     if (element) {
@@ -65,8 +64,9 @@ function updateScreener() {
   const query = getValue("#screener-search").toLowerCase();
   const sectorSlug = getValue("#sector-filter");
   const sortMode = getValue("#sort-filter") || "score-desc";
-  const peUnder10 = document.querySelector("#pe-under-10")?.checked;
-  const roeOver15 = document.querySelector("#roe-over-15")?.checked;
+  const changeFilter = getValue("#change-filter");
+  const peMax = parseMetric(getValue("#pe-max"));
+  const roeMin = parseMetric(getValue("#roe-min"));
 
   const filtered = screenerState.companies
     .filter((company) => {
@@ -74,10 +74,17 @@ function updateScreener() {
         company.name.toLowerCase().includes(query) ||
         company.ticker.toLowerCase().includes(query);
       const matchesSector = !sectorSlug || company.sectorSlug === sectorSlug;
-      const matchesPe = !peUnder10 || Number(company.pe) < 10;
-      const matchesRoe = !roeOver15 || Number(company.roe) > 15;
+      const change = parseMetric(company.changePercent || company.change);
+      const matchesChange =
+        !changeFilter ||
+        (changeFilter === "positive" && Number.isFinite(change) && change > 0) ||
+        (changeFilter === "negative" && Number.isFinite(change) && change < 0);
+      const pe = parseMetric(company.pe);
+      const roe = parseMetric(company.roe);
+      const matchesPe = !Number.isFinite(peMax) || (Number.isFinite(pe) && pe <= peMax);
+      const matchesRoe = !Number.isFinite(roeMin) || (Number.isFinite(roe) && roe >= roeMin);
 
-      return matchesQuery && matchesSector && matchesPe && matchesRoe;
+      return matchesQuery && matchesSector && matchesChange && matchesPe && matchesRoe;
     })
     .sort((a, b) => sortCompanies(a, b, sortMode));
 
@@ -95,7 +102,10 @@ function renderScreenerRows(companies) {
   if (!tbody) return;
 
   if (companies.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="9">Компании не найдены.</td></tr>';
+    const message = screenerState.companies.length === 0
+      ? "Данные пока не загружены. Запустите обновление данных."
+      : "Компании не найдены.";
+    tbody.innerHTML = `<tr><td colspan="10">${escapeHtml(message)}</td></tr>`;
     return;
   }
 
@@ -106,11 +116,12 @@ function renderScreenerRows(companies) {
           <td><a href="company.html?ticker=${encodeURIComponent(company.ticker)}">${escapeHtml(company.name)}</a></td>
           <td>${escapeHtml(company.ticker)}</td>
           <td><a href="sector.html?sector=${encodeURIComponent(company.sectorSlug)}">${escapeHtml(company.sector)}</a></td>
-          <td>${formatNumber(company.pe)}</td>
-          <td>${formatNumber(company.pb)}</td>
-          <td class="positive">${formatPercent(company.roe)}</td>
-          <td>${formatPercent(company.dividendYield)}</td>
-          <td>${escapeHtml(company.debtLevel)}</td>
+          <td>${formatValue(company.price)}</td>
+          <td class="${changeClass(company.changePercent || company.change)}">${formatValue(company.changePercent || company.change)}</td>
+          <td>${formatValue(company.pe)}</td>
+          <td>${formatValue(company.pb)}</td>
+          <td>${formatPercentLike(company.roe)}</td>
+          <td>${formatPercentLike(company.dividendYield)}</td>
           <td><span class="score-badge ${scoreClass(company.score)}">${company.score}</span></td>
         </tr>
       `;
@@ -119,31 +130,68 @@ function renderScreenerRows(companies) {
 }
 
 function sortCompanies(a, b, mode) {
-  if (mode === "score-asc") return a.score - b.score;
-  if (mode === "pe-asc") return a.pe - b.pe;
-  if (mode === "roe-desc") return b.roe - a.roe;
+  if (mode === "score-asc") return Number(a.score || 0) - Number(b.score || 0);
+  if (mode === "pe-asc") return compareNumbers(a.pe, b.pe);
+  if (mode === "roe-desc") return compareNumbers(b.roe, a.roe);
+  if (mode === "change-desc") return compareNumbers(b.changePercent || b.change, a.changePercent || a.change);
   if (mode === "name-asc") return a.name.localeCompare(b.name, "ru");
-  return b.score - a.score;
+  return Number(b.score || 0) - Number(a.score || 0);
 }
 
-async function fetchJson(url) {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Request failed: ${url}`);
+function buildSectorsFromCompanies(companies) {
+  const sectors = new Map();
+
+  for (const company of companies) {
+    if (!company.sectorSlug || !company.sector) continue;
+    if (!sectors.has(company.sectorSlug)) {
+      sectors.set(company.sectorSlug, {
+        slug: company.sectorSlug,
+        title: company.sector
+      });
+    }
   }
-  return response.json();
+
+  return [...sectors.values()].sort((a, b) => a.title.localeCompare(b.title, "ru"));
 }
 
 function getValue(selector) {
   return document.querySelector(selector)?.value.trim() || "";
 }
 
-function formatNumber(value) {
-  return Number(value).toFixed(1);
+function compareNumbers(left, right) {
+  const a = parseMetric(left);
+  const b = parseMetric(right);
+  if (!Number.isFinite(a) && !Number.isFinite(b)) return 0;
+  if (!Number.isFinite(a)) return 1;
+  if (!Number.isFinite(b)) return -1;
+  return a - b;
 }
 
-function formatPercent(value) {
-  return `${Number(value).toFixed(1)}%`;
+function parseMetric(value) {
+  const text = String(value ?? "")
+    .replace(/\s/g, "")
+    .replace(",", ".")
+    .replace(/%/g, "")
+    .replace(/[^\d.+-]/g, "");
+  return text ? Number(text) : NaN;
+}
+
+function formatValue(value) {
+  const text = String(value ?? "").trim();
+  return text || "Нет данных";
+}
+
+function formatPercentLike(value) {
+  const text = String(value ?? "").trim();
+  if (!text) return "Нет данных";
+  return text.includes("%") ? text : `${text}%`;
+}
+
+function changeClass(value) {
+  const number = parseMetric(value);
+  if (number > 0) return "positive";
+  if (number < 0) return "negative";
+  return "neutral";
 }
 
 function scoreClass(score) {
