@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-15T21:00:07.784Z",
+  "updatedAt": "2026-09-15T23:30:07.953Z",
   "instruments": [
     {
       "name": "БСП",
@@ -170,7 +170,7 @@
       "change": "-2.26%",
       "changePercent": "-2.26%",
       "volume": "2 935",
-      "marketCap": "662.16",
+      "marketCap": "661.97",
       "pe": 2.4,
       "pb": 0.44,
       "roe": 18.3,
